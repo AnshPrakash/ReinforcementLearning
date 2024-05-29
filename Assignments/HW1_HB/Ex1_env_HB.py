@@ -18,7 +18,7 @@ class HikerAndBear(HikerAndBearBase):
         ### YOUR CODE HERE ###
 
         # fill the last row of the grid with probability 1
-        mu[:,9,:] =  1
+        mu[:,self._size[0]-1,:] =  1
         # normalize the distribution
         mu = mu/mu.sum()
         # flatten the distribution
