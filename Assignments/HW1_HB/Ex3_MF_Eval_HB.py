@@ -46,9 +46,31 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
     """
 
     ### YOUR CODE HERE ###
+    V = np.zeros((env.p.shape[0] ,1))
+    Ns = [0]*V.shape[0]
+    for _ in num_rollouts:
+        
+        curr_state = env.reset()
+        absorbing = not np.any(env.p[curr_state[0]])
+        episode = []
+        while not absorbing:
+            action = agent.draw_action(curr_state)
+            next_state, reward, absorbing, _ = env.step(action)
+            episode.append( { "state" : curr_state,
+                              "action" : action,
+                              "next_state" : next_state,
+                              "reward" : reward
+                             })
+            curr_state = next_state
 
+        for (state, action, next_state, reward) in episode:
+            V[state] += reward
+            Ns[state] += 1
+        V = np.divide(V, Ns , out = V, where = (Ns != 0))
+    
+    value = V
     ######################
-
+    
     return value
 
 
