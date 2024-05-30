@@ -28,21 +28,36 @@ class HikerAndBear(HikerAndBearBase):
 
         return mu
 
+    def isbounded(self, i,j):
+        if i >= 0 and i < self._size[0] and j >=0 and j < self._size[1]:
+            return True
+        return False
+
     def set_prob(self, p, j_b, i_h, j_h,new_i_h, new_j_h, capture_prob, a, bear_pos_ih, prob) :
-        p[
-            self.state_(j_b, i_h, j_h),
-            a,
-            self.state_(j_b, new_i_h, new_j_h),
-        ] += (
-            (1 - capture_prob)*(prob)
-        )  # probability to perform the action
-        p[
-            self.state_(j_b, i_h, j_h),
-            a,
-            self.state_(j_b, i_h, j_h),
-        ] += (
-            (1 - capture_prob)*(1 - prob)
-        )  # probability to stay in the same position (action may fail)
+        if self.isbounded( new_i_h, new_j_h):
+            p[
+                self.state_(j_b, i_h, j_h),
+                a,
+                self.state_(j_b, new_i_h, new_j_h),
+            ] += (
+                (1 - capture_prob)*(prob)
+            )  # probability to perform the action
+            p[
+                self.state_(j_b, i_h, j_h),
+                a,
+                self.state_(j_b, i_h, j_h),
+            ] += (
+                (1 - capture_prob)*(1 - prob)
+            )  # probability to stay in the same position (action may fail)
+        else:
+            # can't move to the next state as it is beyond the boundary.
+            p[
+                self.state_(j_b, i_h, j_h),
+                a,
+                self.state_(j_b, i_h, j_h),
+            ] += (
+                (1 - capture_prob)*(1)
+            )
         ### YOUR CODE HERE ###
 
         # probability to be captured by the bear
@@ -119,12 +134,8 @@ class HikerAndBear(HikerAndBearBase):
                             
                             # rest of the environment
                             capture_prob = 0.0
-                            if new_i_h >=0 and new_i_h < self._size[0] and new_j_h >=0 and new_j_h < self._size[1]:
-                                # update only for valid actions
-                                self.set_prob( p, j_b, i_h, j_h,new_i_h, new_j_h, capture_prob, a, bear_pos_ih, prob)
+                            self.set_prob( p, j_b, i_h, j_h,new_i_h, new_j_h, capture_prob, a, bear_pos_ih, prob)
                             ######################
-
-        print(np.sum(p, axis = 2))
         return p
 
     def compute_rewards(self):
@@ -159,7 +170,7 @@ class HikerAndBear(HikerAndBearBase):
                         new_i_h = i_h + self.directions[a][0]
                         new_j_h = j_h + self.directions[a][1]
                         
-                        if new_i_h >= 0 and new_i_h < self._size[0] and new_j_h >= 0 and new_j_h < self._size[1]:
+                        if not self.isbounded( new_i_h, new_j_h):
                             #out of bound
                             continue
 
@@ -193,7 +204,7 @@ class HikerAndBear(HikerAndBearBase):
                                 self.state_(j_b, i_h, j_h),
                                 :,
                                 self.state_(j_b, new_i_h, new_j_h)
-                            ] = 1.0
+                            ] = +1.0
                         ######################
 
         return r
