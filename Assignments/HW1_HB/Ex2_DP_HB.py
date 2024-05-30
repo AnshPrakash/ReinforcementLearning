@@ -168,8 +168,8 @@ def policy_iteration_left(prob, reward, gamma, iterations):
     policy = np.ones(n_states, dtype=int)*2
     value = np.zeros(n_states)
 
-    changed = True
-    while changed:
+    iter = 0
+    while iter < iterations:
         p_pi = np.zeros((n_states, n_states))
         r_pi = np.zeros(n_states)
         i = np.eye(n_states)
@@ -184,7 +184,6 @@ def policy_iteration_left(prob, reward, gamma, iterations):
 
         value = np.linalg.solve(i - gamma * p_pi, r_pi)
 
-        changed = False
 
         for state in range(n_states):
             vmax = value[state]
@@ -196,9 +195,8 @@ def policy_iteration_left(prob, reward, gamma, iterations):
                     if va > vmax and not np.isclose(va, vmax):
                         policy[state] = action
                         vmax = va
-                        changed = True
-
-
+                        
+        iter = iter + 1
     ######################
 
     return value, policy
