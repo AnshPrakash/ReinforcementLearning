@@ -34,7 +34,7 @@ class HikerAndBear(HikerAndBearBase):
             a,
             self.state_(j_b, new_i_h, new_j_h),
         ] += (
-            (1 - capture_prob)*(prob - 0.9)
+            (1 - capture_prob)*(prob)
         )  # probability to perform the action
         p[
             self.state_(j_b, i_h, j_h),
@@ -123,6 +123,8 @@ class HikerAndBear(HikerAndBearBase):
                                 # update only for valid actions
                                 self.set_prob( p, j_b, i_h, j_h,new_i_h, new_j_h, capture_prob, a, bear_pos_ih, prob)
                             ######################
+
+        print(np.sum(p, axis = 2))
         return p
 
     def compute_rewards(self):
