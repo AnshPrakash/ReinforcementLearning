@@ -48,7 +48,7 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,1))
     Ns = np.zeros((env.p.shape[0] ,1))
-    MAX_SIZE_OF_EPISDE = 1000
+    MAX_SIZE_OF_EPISDE = 10000
     for _ in range(num_rollouts):
         
         curr_state = env.reset()
@@ -107,7 +107,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,))
 
-    MAX_SIZE_OF_EPISDE = 1000
+    MAX_SIZE_OF_EPISDE = 10000
 
     for _ in range(num_rollouts):    
         curr_state = env.reset()
@@ -145,10 +145,10 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
         for i,(state, _, _, _) in enumerate(episode):
             Vn = 0
             if i < len(episode) - 1:
-                next_state = episode[i + 1]
+                next_state = episode[i + 1][2]
                 Vn = V[next_state]
 
-            V[state] = V[state] + alpha((Jn[i] + gamma_pow_n*Vn) - V[state])
+            V[state] = V[state] + alpha*((Jn[i] + gamma_pow_n*Vn) - V[state])
     
     value = V
 
