@@ -102,12 +102,13 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
 
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,1))
-    Ns = np.zeros((env.p.shape[0] ,1))
+
     for _ in num_rollouts:
         
         curr_state = env.reset()
         absorbing = not np.any(env.p[curr_state[0]])
         episode = []
+        #sample an episode
         while not absorbing:
             action = agent.draw_action(curr_state)
             next_state, reward, absorbing, _ = env.step(action)
@@ -119,11 +120,30 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
                             )
                         )
             curr_state = next_state
+        
+        #update the states
+        gamma_pow_n = gamma**n
+        Jn = []
+        G = 0
+        from queue import Queue
+        q = Queue()
+        for i,(state, action, next_state, reward) in enumerate(episode[::-1]):
+            if (q.size() == n) :
+                r_n = q.get()
+                G -= gamma_pow_n*r_n
+            q.put(reward)
+            G = reward + gamma*G
+            Jn.append(G)
+        
+        Jn = Jn[: : -1]
 
-        for (state, action, next_state, reward) in episode:
-            V[state] += reward
-            Ns[state] += 1
-        V = np.divide(V, Ns , out = V, where = (Ns != 0))
+        for i,(state, _, _, _) in enumerate(episode):
+            Vn = 0
+            if i < len(episode) - 1:
+                next_state = episode[i + 1]
+                Vn = V[next_state]
+
+            V[state] = V[state] + alpha((Jn[i] + gamma_pow_n*Vn) - V[state])
     
     value = V
 
