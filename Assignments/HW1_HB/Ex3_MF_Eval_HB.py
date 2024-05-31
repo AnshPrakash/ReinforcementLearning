@@ -48,12 +48,13 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,1))
     Ns = np.zeros((env.p.shape[0] ,1))
-    for _ in num_rollouts:
+    MAX_SIZE_OF_EPISDE = 1000
+    for _ in range(num_rollouts):
         
         curr_state = env.reset()
         absorbing = not np.any(env.p[curr_state[0]])
         episode = []
-        while not absorbing:
+        while not absorbing and len(episode) < MAX_SIZE_OF_EPISDE:
             action = agent.draw_action(curr_state)
             next_state, reward, absorbing, _ = env.step(action)
             episode.append( 
@@ -64,14 +65,17 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
                             )
                         )
             curr_state = next_state
-        
+
+            
         G = 0
         for (state, action, next_state, reward) in episode[: : -1]:
             G += reward
             V[state] += G
             Ns[state] += 1
             G = gamma*G
-        V = np.divide(V, Ns , out = V, where = (Ns != 0))
+        
+    V = np.divide(V, Ns , out = V, where = (Ns != 0))
+        
     
     value = V
     ######################
@@ -101,15 +105,16 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     """
 
     ### YOUR CODE HERE ###
-    V = np.zeros((env.p.shape[0] ,1))
+    V = np.zeros((env.p.shape[0] ,))
 
-    for _ in num_rollouts:
-        
+    MAX_SIZE_OF_EPISDE = 1000
+
+    for _ in range(num_rollouts):    
         curr_state = env.reset()
         absorbing = not np.any(env.p[curr_state[0]])
         episode = []
         #sample an episode
-        while not absorbing:
+        while not absorbing and len(episode) < MAX_SIZE_OF_EPISDE:
             action = agent.draw_action(curr_state)
             next_state, reward, absorbing, _ = env.step(action)
             episode.append( 
@@ -120,7 +125,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
                             )
                         )
             curr_state = next_state
-        
+        # print("Update state")
         #update the states
         gamma_pow_n = gamma**n
         Jn = []
@@ -128,7 +133,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
         from queue import Queue
         q = Queue()
         for i,(state, action, next_state, reward) in enumerate(episode[::-1]):
-            if (q.size() == n) :
+            if (q.qsize() == n) :
                 r_n = q.get()
                 G -= gamma_pow_n*r_n
             q.put(reward)
@@ -152,7 +157,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     return value
 
 
-policy = np.load("/home/aryaman/Desktop/assignments-2024/1/HW1_HB_v4/pi_left_10.npy")
+policy = np.load("./pi_left_10.npy")
 agent = NumpyPolicyAgent(policy)
 env = HikerAndBear()
 V_MC = MC_policy_eval(agent, env, 1000, 0.9)
