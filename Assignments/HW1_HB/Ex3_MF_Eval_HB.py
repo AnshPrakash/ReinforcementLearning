@@ -47,7 +47,7 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
 
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,1))
-    Ns = [0]*V.shape[0]
+    Ns = np.zeros((env.p.shape[0] ,1))
     for _ in num_rollouts:
         
         curr_state = env.reset()
@@ -56,11 +56,13 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
         while not absorbing:
             action = agent.draw_action(curr_state)
             next_state, reward, absorbing, _ = env.step(action)
-            episode.append( { "state" : curr_state,
-                              "action" : action,
-                              "next_state" : next_state,
-                              "reward" : reward
-                             })
+            episode.append( 
+                            ( curr_state,
+                              action,
+                              next_state,
+                              reward
+                            )
+                        )
             curr_state = next_state
 
         for (state, action, next_state, reward) in episode:
@@ -96,6 +98,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     """
 
     ### YOUR CODE HERE ###
+
 
     ######################
 
