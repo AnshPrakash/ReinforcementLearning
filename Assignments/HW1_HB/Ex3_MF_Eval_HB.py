@@ -157,11 +157,12 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     return value
 
 
-policy = np.load("./pi_left_10.npy")
-agent = NumpyPolicyAgent(policy)
-env = HikerAndBear()
-V_MC = MC_policy_eval(agent, env, 1000, 0.9)
-visualize_value_matrices(V_MC, "MC_every_visit_policy_eval")
+if __name__ == "__main__" :
+    policy = np.load("./pi_left_10.npy")
+    agent = NumpyPolicyAgent(policy)
+    env = HikerAndBear()
+    V_MC = MC_policy_eval(agent, env, 1000, 0.9)
+    visualize_value_matrices(V_MC, "MC_every_visit_policy_eval")
 
-V_TD = TD_policy_eval(agent, env, 1000, 0.1, 0.9, 5)
-visualize_value_matrices(V_TD, "TD_5_policy_eval")
+    V_TD = TD_policy_eval(agent, env, 1000, 0.1, 0.9, 5)
+    visualize_value_matrices(V_TD, "TD_5_policy_eval")
