@@ -24,6 +24,7 @@ actions = {0: (1, 0), 1: (0, -1), 2: (-1, 0), 3: (0, 1)}
 
 
 def run(policy, agent, params, num_epochs=100, n_steps=1000, n_episodes_test=5, seed=0):
+    np.random.seed(seed)
     # create the policy
     pi = policy(params["eps"])
     # create the agent
