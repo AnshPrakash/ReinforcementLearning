@@ -6,7 +6,7 @@ from Ex2_DP_HB import visualize_value_matrices
 
 
 figures_path = "fig/"
-
+MAX_SIZE_OF_EPISDE = 1000000
 
 class NumpyPolicyAgent(Agent):
     """
@@ -48,7 +48,7 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,1))
     Ns = np.zeros((env.p.shape[0] ,1))
-    MAX_SIZE_OF_EPISDE = 10000
+    
     for _ in range(num_rollouts):
         
         curr_state = env.reset()
@@ -107,7 +107,6 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     ### YOUR CODE HERE ###
     V = np.zeros((env.p.shape[0] ,))
 
-    MAX_SIZE_OF_EPISDE = 10000
 
     for _ in range(num_rollouts):    
         curr_state = env.reset()
@@ -158,6 +157,7 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
 
 
 if __name__ == "__main__" :
+    MAX_SIZE_OF_EPISDE = 1000
     policy = np.load("./pi_left_10.npy")
     agent = NumpyPolicyAgent(policy)
     env = HikerAndBear()
