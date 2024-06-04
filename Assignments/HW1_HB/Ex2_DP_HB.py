@@ -213,3 +213,18 @@ visualize_value_matrices(V_p_left, "Policy_Left_Iteration_Value_10")
 visualize_policy(pi_left, "Policy_Left_Iteration_Policy_10")
 
 np.save("pi_left_10.npy", pi_left)
+
+
+"""
+Q& A
+1.2.1
+Compare the value maps for PI and VI. What do you observe?
+
+Ans:
+According to my experiment, I see both PI and VI give the same State Value Matrix.
+
+
+1.2.2 What do you observe compared to the PI that runs until
+convergence?
+Policy Iteration limit to 10 iteration didn’t converge and values were not able to propagate to initial states completely.
+"""
