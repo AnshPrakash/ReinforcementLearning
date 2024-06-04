@@ -27,14 +27,33 @@ for i in range(3):
 
 def visualise(episodes):
     
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, 3, figsize=(10, 10))
+
     H,W = 10, 10
     grid = np.ones((H,W), dtype=int)*-1
     directions = [[0, 1], [-1, 0], [0, -1], [1, 0]]
     # for i, c in enumerate(cell_list):
     #   pi[tuple(c)]=np.argmax(Q[i])
-    plt.title("SARSALambda Trajectories ")
-    plt.imshow(grid, cmap='jet')
+    
+    for idx in range(3):
+        grid[5][5] = 0
+        grid[5][0] = 0
+        
+        curr_state = episodes[idx][0][2]
+        x , y =  (curr_state//W).item()  , (curr_state%W).item()
+        if curr_state >= 100:
+            curr_state = curr_state%100
+            x , y =  (curr_state//W).item()  , (curr_state%W).item()
+        grid[x][y] = 1
+        if episodes[idx][0][0] >= 100:
+            grid[5][0] = -1
+        else:
+            grid[5][5] = -1
+        ax[idx].imshow(grid, cmap='jet')
+        grid[x][y] = -1
+        grid[5][5] = -1
+        grid[5][0] = -1
+
     # draw the policy arrows
     colors = ['w', 'b', 'g']
     for idx, episode in enumerate(episodes):
@@ -47,7 +66,9 @@ def visualise(episodes):
                 i , j =  (curr_state//W).item()  , (curr_state%W).item()
             
             action = obs[1].item()
-            plt.arrow(j, i, 0.25*directions[action][1], 0.25*directions[action][0], head_width=0.2, head_length=0.1, color=colors[idx])
+            ax[idx].arrow(j, i, 0.25*directions[action][1], 0.25*directions[action][0], head_width=0.2, head_length=0.1, color=colors[idx])
     plt.show()
+    
+    
 
 visualise(episodes)
