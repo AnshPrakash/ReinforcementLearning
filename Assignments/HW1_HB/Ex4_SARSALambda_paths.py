@@ -67,8 +67,8 @@ def visualise(episodes):
             
             action = obs[1].item()
             ax[idx].arrow(j, i, 0.25*directions[action][1], 0.25*directions[action][0], head_width=0.2, head_length=0.1, color=colors[idx])
-    plt.show()
-    
+    # plt.show()
+    plt.savefig('fig/Ex4.png')
     
 
 visualise(episodes)
