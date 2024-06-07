@@ -42,3 +42,17 @@ visualize_value_matrices(V_TD, "SARSALambda_TD5_eval")
 
 
 ######################
+
+
+"""
+Q&A
+
+1.3.3
+Observations:
+Looking at the value maps between MC and TD(5) clearly shows better estimation by MC. This is because TD(5) can only propagate rewards upto 5 steps, whereas MC gets the goal state reward to the initial state for every episode.
+Following the increasing values in the grid also shows the optimal path followed by each of the algorithms.
+SARSA lambda:  It seems to have found the simplest and safest path to goal states. Additionally, it also assigns better values to equivalent states.
+SARSA: It found better policy than SARSA lambda as it is not wasting too many steps going too far from the bear when it has no more advantage. 
+Q-Learning: It has also found optimal policy, but it is not too stringent on following limit paths from different initial states(Notice values close to initial  states). It also gives value to equivalent states, where this information is missing in vanila SARSA.
+
+"""

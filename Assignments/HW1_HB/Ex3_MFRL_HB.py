@@ -216,3 +216,27 @@ plt.xlabel("Epochs")
 plt.ylabel("J")
 fig.suptitle("Results - Greedy Policy")
 fig.savefig(f"{figures_path}/J_greedy_policy" + ".png")
+
+
+
+"""
+Q&A
+
+1.3.2
+Q. Which algorithm learns the fastest? Can you think of a reason why?
+Answer:
+SARSALambda learns the fastest. It could be because of following reasons:
+Q-Learning tries to use behavioral and greedy policy together and using greedy policy in the initial stage leads to a lot of mistakes which causes slower learning.
+SARSA lambda uses eligibility trace which helps to assign rewards proportionally, whereas SARSA doesn’t try to solve this credit assignment and takes longer to converge.
+
+Q. Compare the final performance of the greedy policies of Q Learning and SARSA. Which one performs better, and why?
+Ans:
+Final performance of the greedy policies of Q learning and SARSA are equivalent. This is because both the algorithms converged as we can also see the J-curve plateau.
+
+Q. Compare the behaviour policies of Q Learning and SARSA. How does the final performance compare? Why is this different to the final performance of the greedy policies?
+
+Again, both these policies converged to similar J-values as the J-curve started to plateau.  
+However, behavioral policy is different from greedy policy as the converged values are lower than in greedy policy. This is because the greedy policy moved closer to the optimal policy and behavioural policy still takes random actions for exploration and these could be suboptimal.
+
+
+"""
