@@ -6,7 +6,7 @@ from Ex2_DP_HB import visualize_value_matrices
 
 
 figures_path = "fig/"
-
+MAX_SIZE_OF_EPISDE = 1000000
 
 class NumpyPolicyAgent(Agent):
     """
@@ -46,9 +46,40 @@ def MC_policy_eval(agent, env, num_rollouts, gamma):
     """
 
     ### YOUR CODE HERE ###
+    V = np.zeros((env.p.shape[0] ,1))
+    Ns = np.zeros((env.p.shape[0] ,1))
+    
+    for _ in range(num_rollouts):
+        
+        curr_state = env.reset()
+        absorbing = not np.any(env.p[curr_state[0]])
+        episode = []
+        while not absorbing and len(episode) < MAX_SIZE_OF_EPISDE:
+            action = agent.draw_action(curr_state)
+            next_state, reward, absorbing, _ = env.step(action)
+            episode.append( 
+                            ( curr_state,
+                              action,
+                              next_state,
+                              reward
+                            )
+                        )
+            curr_state = next_state
 
+            
+        G = 0
+        for (state, action, next_state, reward) in episode[: : -1]:
+            G += reward
+            V[state] += G
+            Ns[state] += 1
+            G = gamma*G
+        
+    V = np.divide(V, Ns , out = V, where = (Ns != 0))
+        
+    
+    value = V
     ######################
-
+    
     return value
 
 
@@ -74,17 +105,64 @@ def TD_policy_eval(agent, env, num_rollouts, alpha, gamma, n):
     """
 
     ### YOUR CODE HERE ###
+    V = np.zeros((env.p.shape[0] ,))
+
+
+    for _ in range(num_rollouts):    
+        curr_state = env.reset()
+        absorbing = not np.any(env.p[curr_state[0]])
+        episode = []
+        #sample an episode
+        while not absorbing and len(episode) < MAX_SIZE_OF_EPISDE:
+            action = agent.draw_action(curr_state)
+            next_state, reward, absorbing, _ = env.step(action)
+            episode.append( 
+                            ( curr_state,
+                              action,
+                              next_state,
+                              reward
+                            )
+                        )
+            curr_state = next_state
+        # print("Update state")
+        #update the states
+        gamma_pow_n = gamma**n
+        Jn = []
+        G = 0
+        from queue import Queue
+        q = Queue()
+        for i,(state, action, next_state, reward) in enumerate(episode[::-1]):
+            if (q.qsize() == n) :
+                r_n = q.get()
+                G -= gamma_pow_n*r_n
+            q.put(reward)
+            G = reward + gamma*G
+            Jn.append(G)
+        
+        Jn = Jn[: : -1]
+
+        for i,(state, _, _, _) in enumerate(episode):
+            Vn = 0
+            if i < len(episode) - 1:
+                next_state = episode[i + 1][2]
+                Vn = V[next_state]
+
+            V[state] = V[state] + alpha*((Jn[i] + gamma_pow_n*Vn) - V[state])
+    
+    value = V
 
     ######################
 
     return value
 
 
-policy = np.load("/home/aryaman/Desktop/assignments-2024/1/HW1_HB_v4/pi_left_10.npy")
-agent = NumpyPolicyAgent(policy)
-env = HikerAndBear()
-V_MC = MC_policy_eval(agent, env, 1000, 0.9)
-visualize_value_matrices(V_MC, "MC_every_visit_policy_eval")
+if __name__ == "__main__" :
+    MAX_SIZE_OF_EPISDE = 1000
+    policy = np.load("./pi_left_10.npy")
+    agent = NumpyPolicyAgent(policy)
+    env = HikerAndBear()
+    V_MC = MC_policy_eval(agent, env, 1000, 0.9)
+    visualize_value_matrices(V_MC, "MC_every_visit_policy_eval")
 
-V_TD = TD_policy_eval(agent, env, 1000, 0.1, 0.9, 5)
-visualize_value_matrices(V_TD, "TD_5_policy_eval")
+    V_TD = TD_policy_eval(agent, env, 1000, 0.1, 0.9, 5)
+    visualize_value_matrices(V_TD, "TD_5_policy_eval")

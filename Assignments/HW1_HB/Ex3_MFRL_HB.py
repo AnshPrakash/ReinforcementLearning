@@ -24,6 +24,7 @@ actions = {0: (1, 0), 1: (0, -1), 2: (-1, 0), 3: (0, 1)}
 
 
 def run(policy, agent, params, num_epochs=100, n_steps=1000, n_episodes_test=5, seed=0):
+    np.random.seed(seed)
     # create the policy
     pi = policy(params["eps"])
     # create the agent
@@ -31,7 +32,7 @@ def run(policy, agent, params, num_epochs=100, n_steps=1000, n_episodes_test=5, 
     ### YOUR CODE HERE ###
 
     if agent == SARSALambda:
-        ###
+        agent = SARSALambda(mdp.info, pi, learning_rate = params["learning_rate"], lambda_coeff=params["lambda"])
 
     ######################
 
@@ -50,18 +51,23 @@ def run(policy, agent, params, num_epochs=100, n_steps=1000, n_episodes_test=5, 
         ### YOUR CODE HERE ###
 
         # train the agent
-
+        core.learn(n_episodes= None, n_steps = n_steps, n_steps_per_fit = 1)
         ######################
 
         
         ### YOUR CODE HERE ###
 
         # evaluate the policy used in training
-        dataset = 
+        dataset = core.evaluate(n_episodes = n_episodes_test, quiet=True)
+        J = np.mean(compute_J(dataset,mdp.info.gamma))
+        Js_behaviour[i] = J
 
         # evaluate the greedy policy
         # set epsilon to 0 for testing
-        dataset = 
+        agent.policy.set_epsilon(Parameter(0.0))
+        dataset = core.evaluate(n_episodes = n_episodes_test, quiet=True)
+        J = np.mean(compute_J(dataset,mdp.info.gamma))
+        Js_greedy[i] = J
 
         ######################
 
@@ -87,14 +93,18 @@ def run_experiment(
             print("Policy: ", pi.__name__)
             print("Agent : ", agent.__name__)
             print("#" * 30)
-            Js_seeds = []
+            # Js_seeds = []
+            Js_behaviour_seeds = []
+            Js_greedy_seeds = []
             for i in trange(num_runs):
                 print("Run: ", i)
                 ### YOUR CODE HERE ###
 
                 # train the agent
 
-                Js_behaviour, Js_greedy, core = 
+                Js_behaviour, Js_greedy, core = run(policy = pi, agent = agent,
+                                                     params = params,num_epochs=num_epochs,
+                                                     n_steps=n_steps, n_episodes_test=n_episodes_test, seed=seeds[i])
                 Js_behaviour_seeds.append(Js_behaviour)
                 Js_greedy_seeds.append(Js_greedy)
 
@@ -109,7 +119,7 @@ def run_experiment(
                 Js_behaviour_seeds
             )
             data_greedy[pi.__name__ + "_" + agent.__name__] = np.array(Js_greedy_seeds)
-    return data
+    return (data_behaviour, data_greedy)
 
 
 # initialize the mdp
@@ -133,7 +143,15 @@ agents = [QLearning, SARSA, SARSALambda]
 ### YOUR CODE HERE ###
 
 # aquire the data
-data_behaviour, data_greedy = 
+data_behaviour, data_greedy = run_experiment (
+                                    policies,
+                                    agents,
+                                    params,
+                                    num_runs=10,
+                                    num_epochs=100,
+                                    n_steps=1000,
+                                    n_episodes_test=5,
+                                )
 
 ######################
 
@@ -198,3 +216,27 @@ plt.xlabel("Epochs")
 plt.ylabel("J")
 fig.suptitle("Results - Greedy Policy")
 fig.savefig(f"{figures_path}/J_greedy_policy" + ".png")
+
+
+
+"""
+Q&A
+
+1.3.2
+Q. Which algorithm learns the fastest? Can you think of a reason why?
+Answer:
+SARSALambda learns the fastest. It could be because of following reasons:
+Q-Learning tries to use behavioral and greedy policy together and using greedy policy in the initial stage leads to a lot of mistakes which causes slower learning.
+SARSA lambda uses eligibility trace which helps to assign rewards proportionally, whereas SARSA doesn’t try to solve this credit assignment and takes longer to converge.
+
+Q. Compare the final performance of the greedy policies of Q Learning and SARSA. Which one performs better, and why?
+Ans:
+Final performance of the greedy policies of Q learning and SARSA are equivalent. This is because both the algorithms converged as we can also see the J-curve plateau.
+
+Q. Compare the behaviour policies of Q Learning and SARSA. How does the final performance compare? Why is this different to the final performance of the greedy policies?
+
+Again, both these policies converged to similar J-values as the J-curve started to plateau.  
+However, behavioral policy is different from greedy policy as the converged values are lower than in greedy policy. This is because the greedy policy moved closer to the optimal policy and behavioural policy still takes random actions for exploration and these could be suboptimal.
+
+
+"""

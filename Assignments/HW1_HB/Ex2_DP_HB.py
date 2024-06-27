@@ -22,9 +22,10 @@ def visualize_value_matrices(V, label):
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
     ### YOUR CODE HERE ###
     # reshape the value matrices
+    Vc = V.reshape((2, 10, 10))
 
-    V1 =
-    V2 =
+    V1 = Vc[0]
+    V2 = Vc[1]
 
     ######################
 
@@ -60,9 +61,10 @@ def visualize_policy(pi, label):
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
     ## YOUR CODE HERE ###
     # reshape the policy matrices
+    pi_c = pi.reshape((2, 10, 10))
 
-    pi1 = 
-    pi2 = 
+    pi1 = pi_c[0]
+    pi2 = pi_c[1]
 
     ######################
 
@@ -160,6 +162,41 @@ def policy_iteration_left(prob, reward, gamma, iterations):
     # modify the existing policy iteration algorithm from MushroomRL
     # start with a left initialized policy
 
+    n_states = prob.shape[0]
+    n_actions = prob.shape[1]
+
+    policy = np.ones(n_states, dtype=int)*2
+    value = np.zeros(n_states)
+
+    iter = 0
+    while iter < iterations:
+        p_pi = np.zeros((n_states, n_states))
+        r_pi = np.zeros(n_states)
+        i = np.eye(n_states)
+
+        for state in range(n_states):
+            action = policy[state]
+            p_pi_s = prob[state, action, :]
+            r_pi_s = reward[state, action, :]
+
+            p_pi[state, :] = p_pi_s.T
+            r_pi[state] = p_pi_s.T.dot(r_pi_s)
+
+        value = np.linalg.solve(i - gamma * p_pi, r_pi)
+
+
+        for state in range(n_states):
+            vmax = value[state]
+            for action in range(n_actions):
+                if action != policy[state]:
+                    p_sa = prob[state, action]
+                    r_sa = reward[state, action]
+                    va = p_sa.T.dot(r_sa + gamma * value)
+                    if va > vmax and not np.isclose(va, vmax):
+                        policy[state] = action
+                        vmax = va
+                        
+        iter = iter + 1
     ######################
 
     return value, policy
@@ -176,3 +213,18 @@ visualize_value_matrices(V_p_left, "Policy_Left_Iteration_Value_10")
 visualize_policy(pi_left, "Policy_Left_Iteration_Policy_10")
 
 np.save("pi_left_10.npy", pi_left)
+
+
+"""
+Q& A
+1.2.1
+Compare the value maps for PI and VI. What do you observe?
+
+Ans:
+According to my experiment, I see both PI and VI give the same State Value Matrix.
+
+
+1.2.2 What do you observe compared to the PI that runs until
+convergence?
+Policy Iteration limit to 10 iteration didn’t converge and values were not able to propagate to initial states completely.
+"""
