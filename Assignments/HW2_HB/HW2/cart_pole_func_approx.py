@@ -1,0 +1,160 @@
+# data handling
+import numpy as np
+
+# mushroom
+from mushroom_rl.algorithms.value import TrueOnlineSARSALambda
+from mushroom_rl.core import Core, Logger
+from cart_pole import CartPole
+from mushroom_rl.features import Features
+from mushroom_rl.features.basis import FourierBasis, GaussianRBF
+from mushroom_rl.features.tiles import Tiles
+from mushroom_rl.policy import EpsGreedy
+from mushroom_rl.utils.dataset import compute_J, compute_episodes_length
+from mushroom_rl.utils.plot import plot_mean_conf
+from mushroom_rl.utils.parameters import Parameter
+
+# utils
+from joblib import Parallel, delayed
+from tqdm import trange
+import matplotlib.pyplot as plt
+
+
+def experiment(params, seed, exp_id=None):
+
+    n_epochs = params["n_epochs"]
+    n_steps = params["n_steps"]
+    n_episodes_test = params["n_episodes_test"]
+    render = params["render"]
+    alpha = params["alpha"]
+    func_approx = params["func_approx"]
+
+    np.random.seed(seed)
+
+    # Logger
+    logger = Logger("CartPole_TrueOnlineSARSALambda", results_dir=None)
+    logger.strong_line()
+    logger.info("Environment: CartPole")
+    logger.info("Experiment Algorithm: TrueOnlineSARSALambda")
+    logger.info(f"Function Approximator: {func_approx}")
+
+    # MDP
+    mdp = CartPole(horizon=2000)
+
+    # Policy
+    epsilon = Parameter(value=0.005)
+    pi = EpsGreedy(epsilon=epsilon)
+
+    # Agent
+    if func_approx == "tiles":
+        # [YOUR CODE!]
+
+    elif func_approx == "gaussian":
+        # [YOUR CODE!]
+
+    elif func_approx == "fourier":
+        # [YOUR CODE!]
+
+    elif func_approx == "raw":
+        # [YOUR CODE!]
+
+    approximator_params = dict(
+        input_shape=(features.size,),
+        output_shape=(mdp.info.action_space.n,),
+        n_actions=mdp.info.action_space.n,
+    )
+    algorithm_params = {
+        "learning_rate": learning_rate,
+        "lambda_coeff": params["lambda_coeff"],
+    }
+
+    agent = # [YOUR CODE!]
+
+    # Algorithm
+    core = Core(agent, mdp)
+
+    # Train
+    Js = []
+    dJs = []
+    ELs = []
+    # [YOUR CODE!]
+
+    if exp_id == 0:
+        core.evaluate(n_episodes=1, render=False, quiet=True)
+
+    return Js, dJs, ELs
+
+
+if __name__ == "__main__":
+    n_experiment = 30
+
+    seeds = np.random.randint(0, 1e5, size=(n_experiment,))
+
+    func_approx = ["raw", "fourier", "gaussian", "tiles"]
+    # func_approx = ["gaussian"]
+
+    params = {
+        "n_epochs": 30,
+        "n_steps": 2000,
+        "n_episodes_test": 5,
+        "render": False,
+        "alpha": 0.01,  # [TUNE PARAMETER!]: Modify the learning rate for each algorithm (if needed)!
+        "n_harmonics":  # [TUNE PARAMETER!]
+        "n_centers":    # [TUNE PARAMETER!]
+        "n_tilings":    # [TUNE PARAMETER!]
+        "n_tiles":      # [TUNE PARAMETER!]
+        "lambda_coeff": 0.9,
+    }
+
+    J = {}
+    dJ = {}
+    EL = {}
+    for f in func_approx:
+
+        params["func_approx"] = f
+
+        data = Parallel(n_jobs=-1)(
+            delayed(experiment)(params, seeds[i], exp_id=i) for i in range(n_experiment)
+        )
+        # data = experiment(params, seeds[0], exp_id = 0)
+
+        J[f] = np.array([j[0] for j in data])
+        dJ[f] = np.array([j[1] for j in data])
+        EL[f] = np.array([j[2] for j in data])
+
+    # Plot Undiscounted Average Return
+    fig = plt.figure()
+    ax = fig.gca()
+    colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+
+    for i, (key, value) in enumerate(J.items()):
+        plot_mean_conf(value, ax, color=colors[i], label=key)
+
+    plt.legend(loc=4)
+    plt.xlabel("Epochs")
+    plt.ylabel("Average Return")
+    plt.savefig("J_func_approx.png")
+
+    # Plot discounted Average Return
+    fig = plt.figure()
+    ax = fig.gca()
+    colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+
+    for i, (key, value) in enumerate(dJ.items()):
+        plot_mean_conf(value, ax, color=colors[i], label=key)
+
+    plt.legend(loc=4)
+    plt.xlabel("Epochs")
+    plt.ylabel("Discounted Average Return")
+    plt.savefig("dJ_func_approx.png")
+
+    # Plot Episode Length
+    fig = plt.figure()
+    ax = fig.gca()
+
+    for i, (key, value) in enumerate(EL.items()):
+        plot_mean_conf(value, ax, color=colors[i], label=key)
+
+    plt.legend(loc=4)
+    plt.xlabel("Epochs")
+    plt.ylabel("Episode Length")
+    plt.savefig("EL_func_approx.png")
