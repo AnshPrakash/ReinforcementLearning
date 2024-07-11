@@ -1,1 +1,3 @@
 instructions
+*.png
+__pycache__

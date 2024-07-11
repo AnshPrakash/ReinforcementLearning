@@ -66,19 +66,21 @@ def experiment(params, seed, exp_id=None):
 
     elif func_approx == "gaussian":
         # [YOUR CODE!]
-        features = GaussianRBF.generate(
+        grbf = GaussianRBF.generate(
                                         [n_centers],
                                          np.array([mdp.info.observation_space.low]),
                                          np.array([mdp.info.observation_space.high])
                                         )
+        features = Features(basis_list=grbf)
 
     elif func_approx == "fourier":
         # [YOUR CODE!]
-        features = FourierBasis.generate(np.array([low]), np.array([high]), n=n_harmonics)
+        fourier_basis = FourierBasis.generate(np.array([low]), np.array([high]), n=n_harmonics)
+        features = Features(basis_list=fourier_basis)
 
     elif func_approx == "raw":
         # [YOUR CODE!]
-        features = lambda x : x
+        features = Features(basis_list= [] )
 
     approximator_params = dict(
         input_shape=(features.size,),
@@ -104,20 +106,19 @@ def experiment(params, seed, exp_id=None):
     dJs = []
     ELs = []
     # [YOUR CODE!]
-    num_epoch = 500
-    for i in range(num_epochs):
+    for i in range(n_epochs):
         agent.policy.set_epsilon(epsilon)
         
         
         # train the agent
-        core.learn(n_episodes= None, n_steps = 1, n_steps_per_fit = 1)
+        core.learn(n_episodes = None, n_steps = n_steps, n_steps_per_fit = 1)
         ######################
 
 
         # evaluate the greedy policy
         # set epsilon to 0 for testing
         agent.policy.set_epsilon(Parameter(0.0))
-        dataset = core.evaluate(n_episodes = 2, quiet=True)
+        dataset = core.evaluate(n_episodes = n_episodes_test, quiet=True)
         dJ = np.mean(compute_J(dataset,mdp.info.gamma))
         J = np.mean(compute_J(dataset))
         EL = np.mean(compute_episodes_length(dataset))
@@ -149,10 +150,10 @@ if __name__ == "__main__":
         "n_episodes_test": 5,
         "render": False,
         "alpha": 0.01,  # [TUNE PARAMETER!]: Modify the learning rate for each algorithm (if needed)!
-        "n_harmonics":  # [TUNE PARAMETER!]
-        "n_centers":    # [TUNE PARAMETER!]
-        "n_tilings":    # [TUNE PARAMETER!]
-        "n_tiles":      # [TUNE PARAMETER!]
+        "n_harmonics": 5, # [TUNE PARAMETER!]
+        "n_centers":  5,  # [TUNE PARAMETER!]
+        "n_tilings":  5,  # [TUNE PARAMETER!]
+        "n_tiles":  5,    # [TUNE PARAMETER!]
         "lambda_coeff": 0.9,
     }
 
