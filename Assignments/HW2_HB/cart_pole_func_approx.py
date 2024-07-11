@@ -68,19 +68,21 @@ def experiment(params, seed, exp_id=None):
         # [YOUR CODE!]
         grbf = GaussianRBF.generate(
                                         [n_centers],
-                                         np.array([mdp.info.observation_space.low]),
-                                         np.array([mdp.info.observation_space.high])
+                                         np.array(low),
+                                         np.array(high)
                                         )
         features = Features(basis_list=grbf)
 
     elif func_approx == "fourier":
         # [YOUR CODE!]
-        fourier_basis = FourierBasis.generate(np.array([low]), np.array([high]), n=n_harmonics)
+        fourier_basis = FourierBasis.generate(np.array(low), np.array(high), n=n_harmonics)
         features = Features(basis_list=fourier_basis)
 
     elif func_approx == "raw":
         # [YOUR CODE!]
-        features = Features(basis_list= [] )
+        id = lambda x : x
+        raw_basis = [id, id]
+        features = Features(basis_list= raw_basis)
 
     approximator_params = dict(
         input_shape=(features.size,),
@@ -141,7 +143,8 @@ if __name__ == "__main__":
 
     seeds = np.random.randint(0, 1e5, size=(n_experiment,))
 
-    func_approx = ["raw", "fourier", "gaussian", "tiles"]
+    func_approx = [ "fourier", "gaussian", "tiles"]
+    # func_approx = ["raw", "fourier", "gaussian", "tiles"]
     # func_approx = ["gaussian"]
 
     params = {
