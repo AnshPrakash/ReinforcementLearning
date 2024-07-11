@@ -104,6 +104,29 @@ def experiment(params, seed, exp_id=None):
     dJs = []
     ELs = []
     # [YOUR CODE!]
+    num_epoch = 500
+    for i in range(num_epochs):
+        agent.policy.set_epsilon(epsilon)
+        
+        
+        # train the agent
+        core.learn(n_episodes= None, n_steps = 1, n_steps_per_fit = 1)
+        ######################
+
+
+        # evaluate the greedy policy
+        # set epsilon to 0 for testing
+        agent.policy.set_epsilon(Parameter(0.0))
+        dataset = core.evaluate(n_episodes = 2, quiet=True)
+        dJ = np.mean(compute_J(dataset,mdp.info.gamma))
+        J = np.mean(compute_J(dataset))
+        EL = np.mean(compute_episodes_length(dataset))
+        
+        dJs.append(dJ)
+        Js.append(J)
+        ELs.append(EL)
+        
+        ######################
     
 
     if exp_id == 0:
