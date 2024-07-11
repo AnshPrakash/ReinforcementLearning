@@ -26,6 +26,13 @@ def experiment(params, seed, exp_id=None):
     n_episodes_test = params["n_episodes_test"]
     render = params["render"]
     alpha = params["alpha"]
+    n_harmonics = params["n_harmonics"]
+    n_centers = params["n_centers"]
+    n_tilings = params["n_tilings"]
+    n_tiles = params["n_tiles"]
+
+    learning_rate = alpha
+    
     func_approx = params["func_approx"]
 
     np.random.seed(seed)
@@ -39,6 +46,8 @@ def experiment(params, seed, exp_id=None):
 
     # MDP
     mdp = CartPole(horizon=2000)
+    low = mdp.info.observation_space.low
+    high = mdp.info.observation_space.high
 
     # Policy
     epsilon = Parameter(value=0.005)
@@ -47,15 +56,29 @@ def experiment(params, seed, exp_id=None):
     # Agent
     if func_approx == "tiles":
         # [YOUR CODE!]
+        tilings = Tiles.generate(
+                                 n_tilings, [n_tiles, n_tiles],
+                                 low,
+                                 high
+                                )
+
+        features = Features(tilings=tilings)
 
     elif func_approx == "gaussian":
         # [YOUR CODE!]
+        features = GaussianRBF.generate(
+                                        [n_centers],
+                                         np.array([mdp.info.observation_space.low]),
+                                         np.array([mdp.info.observation_space.high])
+                                        )
 
     elif func_approx == "fourier":
         # [YOUR CODE!]
+        features = FourierBasis.generate(np.array([low]), np.array([high]), n=n_harmonics)
 
     elif func_approx == "raw":
         # [YOUR CODE!]
+        features = lambda x : x
 
     approximator_params = dict(
         input_shape=(features.size,),
