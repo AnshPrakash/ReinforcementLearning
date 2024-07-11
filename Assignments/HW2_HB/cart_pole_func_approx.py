@@ -31,8 +31,8 @@ def experiment(params, seed, exp_id=None):
     n_tilings = params["n_tilings"]
     n_tiles = params["n_tiles"]
 
-    learning_rate = alpha
-    
+    learning_rate = learning_rate = Parameter(alpha)
+
     func_approx = params["func_approx"]
 
     np.random.seed(seed)
@@ -90,7 +90,11 @@ def experiment(params, seed, exp_id=None):
         "lambda_coeff": params["lambda_coeff"],
     }
 
-    agent = # [YOUR CODE!]
+    # [YOUR CODE!] 
+    agent = TrueOnlineSARSALambda(mdp.info, pi,
+                        approximator_params=approximator_params,
+                        features=features, **algorithm_params)
+
 
     # Algorithm
     core = Core(agent, mdp)
@@ -100,6 +104,7 @@ def experiment(params, seed, exp_id=None):
     dJs = []
     ELs = []
     # [YOUR CODE!]
+    
 
     if exp_id == 0:
         core.evaluate(n_episodes=1, render=False, quiet=True)
