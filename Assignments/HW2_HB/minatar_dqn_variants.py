@@ -88,9 +88,18 @@ def compute_V(dataset, q):
 
     """
     # [YOUR CODE!]
+    vs = []
     
-
-    pass
+    initial_states =  get_init_states(dataset)
+    
+    for s0 in initial_states:
+        v = torch.max(q.predict(torch.unsqueeze(s0, axis = 0)))
+        vs.append(v)
+        
+    if len(vs) == 0:
+        return [0.]
+    
+    return vs
 
 
 def run(
