@@ -109,10 +109,9 @@ def experiment(params, seed, exp_id=None):
     ELs = []
     # [YOUR CODE!]
     for i in range(n_epochs):
-        agent.policy.set_epsilon(epsilon)
-        
         
         # train the agent
+        agent.policy.set_epsilon(epsilon)
         core.learn(n_episodes = None, n_steps = n_steps, n_steps_per_fit = 1)
         ######################
 

@@ -166,21 +166,39 @@ def run(
     Vs = []
 
     # collect samples to initialize the replay_memory
-    # [YOUR CODE!]
-    replay_memory = ReplayMemory(initial_replay_size,
-                                 max_replay_size)
-
+    # [YOUR CODE!] [DONE!]
+    
+    # fit_standard add dataset to replay buffer
+    # https://mushroomrl.readthedocs.io/en/1.5.3/_modules/mushroom_rl/algorithms/value/dqn/dqn.html
+    # https://github.com/MushroomRL/mushroom-rl/blob/1a4f54ed23101fbcf48bfe2022a5ff74c37c5b8f/mushroom_rl/core/core.py#L167
+    core.learn(n_steps=initial_replay_size, n_steps_per_fit=initial_replay_size)
+    
     # evaluate the initial policy given the randomly initialized Q function
-    # [YOUR CODE!]
-    
-    
+    # [YOUR CODE!] [DONE!]
+    pi.set_epsilon(epsilon_test)
+    dataset = core.evaluate(n_episodes=n_episodes_test, render=False)
+    J = compute_J(dataset, gamma_eval)
+    V = compute_V(dataset, pi.get_q())
+    episode_lengths = compute_episodes_length(dataset)
+    Js.append(np.mean(J))
+    Vs.append(np.mean(V))
+    ELs.append(np.mean(episode_lengths))
     
 
     # implement the training and evaluation loop
-    # [YOUR CODE!]
+    # [YOUR CODE!] [DONE!]
     for epoch in range(num_epochs):
+        pi.set_epsilon(epsilon)
+        core.learn(n_episodes=n_episodes, n_steps_per_fit=train_frequency)
+        pi.set_epsilon(epsilon_test)
+        dataset = core.evaluate(n_episodes=n_episodes_test, render=False)
+        J = compute_J(dataset, gamma_eval)
+        V = compute_V(dataset, pi.get_q())
+        episode_lengths = compute_episodes_length(dataset)
+        Js.append(np.mean(J))
+        Vs.append(np.mean(V))
+        ELs.append(np.mean(episode_lengths))
         
-
     return Js, ELs, Vs
 
 
