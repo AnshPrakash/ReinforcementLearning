@@ -38,7 +38,11 @@ class QConvNetwork(nn.Module):
         #   out_channels: 16
         #   kernel_size: 3 of a 3x3 filter matrix
         #   stride: 1
-        self.conv = # [YOUR CODE!]
+        self.conv = nn.Conv2d( in_channels= n_input,
+                               output_channels = 16,
+                               kernel_size = 3,
+                               stride=1
+                            ) # [YOUR CODE!]
 
         # Final fully connected hidden layer:
         #   the number of linear unit depends on the output of the conv
@@ -47,15 +51,28 @@ class QConvNetwork(nn.Module):
             return (size - (kernel_size - 1) - 1) // stride + 1
 
         num_linear_units = size_linear_unit(10) * size_linear_unit(10) * 16
-        self.fc_hidden = # [YOUR CODE!]
+        self.fc_hidden  =  nn.Linear(num_linear_units, 128) # [YOUR CODE!]
 
         # Output layer:
-        self.output = # [YOUR CODE!]
+        self.output = nn.Linear(128, n_output) # [YOUR CODE!]
 
     def forward(self, state, action=None):
         # Apply relu to the output of self.conv, self.fc_hidden layers.
         # [YOUR CODE!]
-        pass
+        x = self.conv(x)
+        x = torch.relu(x)
+        x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layer
+        x = self.fc_hidden(x)
+        x = torch.relu(x)
+        q = self.output(x)
+        
+        if action is None:
+            return q
+        else:
+            action = action.long()
+            q_acted = torch.squeeze(q.gather(1,action))
+            return q_acted
+        
 
 
 # Implement the compute_V function to compute the estimated value function at the initial states.
@@ -71,6 +88,7 @@ def compute_V(dataset, q):
 
     """
     # [YOUR CODE!]
+    
 
     pass
 
