@@ -81,8 +81,7 @@ def experiment(params, seed, exp_id=None):
     elif func_approx == "raw":
         # [YOUR CODE!]
         id = lambda x : x
-        raw_basis = [id, id]
-        features = Features(basis_list= raw_basis)
+        features = Features( n_outputs= 2, function= id )
 
     approximator_params = dict(
         input_shape=(features.size,),
@@ -143,7 +142,7 @@ if __name__ == "__main__":
 
     seeds = np.random.randint(0, 1e5, size=(n_experiment,))
 
-    func_approx = [ "fourier", "gaussian", "tiles"]
+    func_approx = [ "raw", "fourier", "gaussian", "tiles"]
     # func_approx = ["raw", "fourier", "gaussian", "tiles"]
     # func_approx = ["gaussian"]
 
