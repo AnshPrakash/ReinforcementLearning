@@ -66,8 +66,9 @@ def experiment(params, seed, exp_id=None):
 
     elif func_approx == "gaussian":
         # [YOUR CODE!]
+        n_features = len(low)
         grbf = GaussianRBF.generate(
-                                        [n_centers],
+                                        [n_centers]*n_features,
                                          np.array(low),
                                          np.array(high)
                                         )
