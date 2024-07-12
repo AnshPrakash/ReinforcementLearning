@@ -42,7 +42,7 @@ class QConvNetwork(nn.Module):
                                output_channels = 16,
                                kernel_size = 3,
                                stride=1
-                            ) # [YOUR CODE!]
+                            ) # [YOUR CODE!] [ DONE!]
 
         # Final fully connected hidden layer:
         #   the number of linear unit depends on the output of the conv
@@ -51,14 +51,14 @@ class QConvNetwork(nn.Module):
             return (size - (kernel_size - 1) - 1) // stride + 1
 
         num_linear_units = size_linear_unit(10) * size_linear_unit(10) * 16
-        self.fc_hidden  =  nn.Linear(num_linear_units, 128) # [YOUR CODE!]
+        self.fc_hidden  =  nn.Linear(num_linear_units, 128) # [YOUR CODE!] [ DONE!]
 
         # Output layer:
-        self.output = nn.Linear(128, n_output) # [YOUR CODE!]
+        self.output = nn.Linear(128, n_output) # [YOUR CODE!] [ DONE!]
 
     def forward(self, state, action=None):
         # Apply relu to the output of self.conv, self.fc_hidden layers.
-        # [YOUR CODE!]
+        # [YOUR CODE!] [ DONE!]
         x = self.conv(state)
         x = torch.relu(x)
         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layer
@@ -87,7 +87,7 @@ def compute_V(dataset, q):
         The approximated value of initial state of each episode in the dataset.
 
     """
-    # [YOUR CODE!]
+    # [YOUR CODE!] [ DONE!]
     vs = []
     
     initial_states =  get_init_states(dataset)
@@ -167,12 +167,19 @@ def run(
 
     # collect samples to initialize the replay_memory
     # [YOUR CODE!]
+    replay_memory = ReplayMemory(initial_replay_size,
+                                 max_replay_size)
 
     # evaluate the initial policy given the randomly initialized Q function
     # [YOUR CODE!]
+    
+    
+    
 
     # implement the training and evaluation loop
     # [YOUR CODE!]
+    for epoch in range(num_epochs):
+        
 
     return Js, ELs, Vs
 
@@ -243,8 +250,26 @@ if __name__ == "__main__":
 
     # Based on the args.agent_class value, please assign the right class to agent_class
     # For algorithms which use more than one model for the online and target approximators, please update the n_approximators to 2.
-    # [YOUR CODE!]
-
+    # [YOUR CODE!] [DONE!]
+    def get_class(class_name):
+        if "NaiveDQN" 
+            return NaiveDQN
+        if "DQNwoReplayBuffer" 
+            return DQNwoReplayBuffer
+        if "DQN" 
+            return DQN
+        if "DoubleDQN" 
+            return DoubleDQN
+        if "MaxminDQN" 
+            return  MaxminDQN
+        if "DoubleMaxminDQN" 
+            return DoubleMaxminDQN
+        if "AveragedDQN" 
+            return AveragedDQN
+        return None
+        
+    agent_class = get_class(args.agent_class)
+        
     params = {
         "eps": args.eps,
         "final_eps": args.final_eps,
