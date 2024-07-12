@@ -39,7 +39,7 @@ class QConvNetwork(nn.Module):
         #   kernel_size: 3 of a 3x3 filter matrix
         #   stride: 1
         self.conv = nn.Conv2d( in_channels= n_input,
-                               output_channels = 16,
+                               out_channels = 16,
                                kernel_size = 3,
                                stride=1
                             ) # [YOUR CODE!] [ DONE!]
@@ -93,7 +93,7 @@ def compute_V(dataset, q):
     initial_states =  get_init_states(dataset)
     
     for s0 in initial_states:
-        v = torch.max(q.predict(torch.unsqueeze(s0, axis = 0)))
+        v = np.max(q.predict(np.expand_dims(s0, axis=0)))
         vs.append(v)
         
     if len(vs) == 0:
@@ -171,29 +171,31 @@ def run(
     # fit_standard add dataset to replay buffer
     # https://mushroomrl.readthedocs.io/en/1.5.3/_modules/mushroom_rl/algorithms/value/dqn/dqn.html
     # https://github.com/MushroomRL/mushroom-rl/blob/1a4f54ed23101fbcf48bfe2022a5ff74c37c5b8f/mushroom_rl/core/core.py#L167
+    initial_replay_size = params["initial_replay_size"]
     core.learn(n_steps=initial_replay_size, n_steps_per_fit=initial_replay_size)
     
     # evaluate the initial policy given the randomly initialized Q function
     # [YOUR CODE!] [DONE!]
-    pi.set_epsilon(epsilon_test)
+    agent.policy.set_epsilon(epsilon_test)
     dataset = core.evaluate(n_episodes=n_episodes_test, render=False)
-    J = compute_J(dataset, gamma_eval)
-    V = compute_V(dataset, pi.get_q())
+    J = compute_J(dataset, mdp.info.gamma)
+    V = compute_V(dataset, agent.policy.get_q())
     episode_lengths = compute_episodes_length(dataset)
     Js.append(np.mean(J))
     Vs.append(np.mean(V))
     ELs.append(np.mean(episode_lengths))
     
-
+    train_frequency = params["train_frequency"]
+    n_episodes = 20
     # implement the training and evaluation loop
     # [YOUR CODE!] [DONE!]
     for epoch in range(num_epochs):
-        pi.set_epsilon(epsilon)
+        agent.policy.set_epsilon(epsilon)
         core.learn(n_episodes=n_episodes, n_steps_per_fit=train_frequency)
-        pi.set_epsilon(epsilon_test)
+        agent.policy.set_epsilon(epsilon_test)
         dataset = core.evaluate(n_episodes=n_episodes_test, render=False)
-        J = compute_J(dataset, gamma_eval)
-        V = compute_V(dataset, pi.get_q())
+        J = compute_J(dataset, mdp.info.gamma)
+        V = compute_V(dataset, agent.policy.get_q())
         episode_lengths = compute_episodes_length(dataset)
         Js.append(np.mean(J))
         Vs.append(np.mean(V))
