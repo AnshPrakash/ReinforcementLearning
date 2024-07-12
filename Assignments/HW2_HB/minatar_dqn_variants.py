@@ -270,19 +270,19 @@ if __name__ == "__main__":
     # For algorithms which use more than one model for the online and target approximators, please update the n_approximators to 2.
     # [YOUR CODE!] [DONE!]
     def get_class(class_name):
-        if "NaiveDQN" 
+        if "NaiveDQN": 
             return NaiveDQN
-        if "DQNwoReplayBuffer" 
+        if "DQNwoReplayBuffer": 
             return DQNwoReplayBuffer
-        if "DQN" 
+        if "DQN": 
             return DQN
-        if "DoubleDQN" 
+        if "DoubleDQN": 
             return DoubleDQN
-        if "MaxminDQN" 
+        if "MaxminDQN": 
             return  MaxminDQN
-        if "DoubleMaxminDQN" 
+        if "DoubleMaxminDQN": 
             return DoubleMaxminDQN
-        if "AveragedDQN" 
+        if "AveragedDQN": 
             return AveragedDQN
         return None
         
