@@ -25,16 +25,16 @@
 #SBATCH -e [YOUR_LOCATION]/logs_sbatch/%A_%a.err
 ## Make sure to create the logs directory (log_sbatch) in [YOUR_LOCATION], BEFORE launching the jobs. [YOUR_LOCATION] needs to be specified by you.
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class DQN --exp_name dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class DQN --exp_name dqn
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class DQNwoReplayBuffer --exp_name dqn_wo_replaybuffer
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class DQNwoReplayBuffer --exp_name dqn_wo_replaybuffer
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class DoubleDQN --exp_name double_dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class DoubleDQN --exp_name double_dqn
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class MaxminDQN --exp_name maxmin_dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class MaxminDQN --exp_name maxmin_dqn
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class DoubleMaxminDQN --exp_name double_maxmin_dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class DoubleMaxminDQN --exp_name double_maxmin_dqn
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class AveragedDQN --exp_name averaged_dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class AveragedDQN --exp_name averaged_dqn
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class NaiveDQN --exp_name naive_dqn
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class NaiveDQN --exp_name naive_dqn

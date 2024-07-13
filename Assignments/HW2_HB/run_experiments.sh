@@ -28,4 +28,4 @@
 ALG=$1
 EXP_NAME=$2
 
-python minatar_dqn_variants.py --n_exp 5 --agent_class ${ALG} --exp_name ${EXP_NAME}
+python minatar_dqn_variants.py --n_exp 5 --n_epochs 50 --agent_class ${ALG} --exp_name ${EXP_NAME}

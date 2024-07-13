@@ -59,12 +59,15 @@ class QConvNetwork(nn.Module):
     def forward(self, state, action=None):
         # Apply relu to the output of self.conv, self.fc_hidden layers.
         # [YOUR CODE!] [ DONE!]
+        # print("input", state.shape)
+        # print("Action", action)
         x = self.conv(state)
         x = torch.relu(x)
         x = x.view(x.size(0), -1)  # Flatten the tensor for the fully connected layer
         x = self.fc_hidden(x)
         x = torch.relu(x)
         q = self.output(x)
+        # print("output", q.shape)
         
         if action is None:
             return q
