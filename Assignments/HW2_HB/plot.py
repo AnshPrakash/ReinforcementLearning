@@ -48,5 +48,43 @@ plt.savefig("J_minatar.png")
 # Plot Value at initial states
 # [YOUR_CODE!]
 
+fig, axs = plt.subplot_mosaic(grid, figsize=(15, 15))
+
+colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+for i, (ax, (key, value)) in enumerate(zip((axs.keys()), data_dir.items())):
+    data = np.load(os.path.join(value, "Vs.npy"))
+
+    plot_mean_conf(data, axs[ax], color=colors[i], label=key)
+    axs[ax].set_xlabel("Epochs")
+    axs[ax].set_ylabel("Value at Initial States")
+
+    plot_mean_conf(data, axs["H"], color=colors[i], label=key)
+
+axs["H"].set_xlabel("Epochs")
+axs["H"].set_ylabel("Value at Initial States")
+
+plt.legend()
+plt.savefig("V_minatar.png")
+
+
+
 # Plot Episode Length
 # [YOUR_CODE!]
+fig, axs = plt.subplot_mosaic(grid, figsize=(15, 15))
+
+colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+for i, (ax, (key, value)) in enumerate(zip((axs.keys()), data_dir.items())):
+    data = np.load(os.path.join(value, "ELs.npy"))
+
+    plot_mean_conf(data, axs[ax], color=colors[i], label=key)
+    axs[ax].set_xlabel("Epochs")
+    axs[ax].set_ylabel("Average Episode Lengths")
+
+    plot_mean_conf(data, axs["H"], color=colors[i], label=key)
+
+axs["H"].set_xlabel("Epochs")
+axs["H"].set_ylabel("Average Episode Lengths")
+
+plt.legend()
+plt.savefig("ELs_minatar.png")
+
