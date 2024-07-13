@@ -275,23 +275,24 @@ if __name__ == "__main__":
     # For algorithms which use more than one model for the online and target approximators, please update the n_approximators to 2.
     # [YOUR CODE!] [DONE!]
     def get_class(class_name):
-        if "NaiveDQN": 
-            return NaiveDQN
-        if "DQNwoReplayBuffer": 
-            return DQNwoReplayBuffer
-        if "DQN": 
-            return DQN
-        if "DoubleDQN": 
-            return DoubleDQN
-        if "MaxminDQN": 
-            return  MaxminDQN
-        if "DoubleMaxminDQN": 
-            return DoubleMaxminDQN
-        if "AveragedDQN": 
-            return AveragedDQN
+        if  class_name == "NaiveDQN": 
+            return NaiveDQN , 1
+        if  class_name == "DQNwoReplayBuffer": 
+            return DQNwoReplayBuffer, 1
+        if  class_name == "DQN": 
+            return DQN, 1
+        if  class_name == "DoubleDQN": 
+            return DoubleDQN, 1
+        if  class_name == "MaxminDQN": 
+            return  MaxminDQN, 2
+        if  class_name == "DoubleMaxminDQN": 
+            return DoubleMaxminDQN, 2
+        if  class_name == "AveragedDQN": 
+            return AveragedDQN, 2
         return None
         
-    agent_class = get_class(args.agent_class)
+    agent_class, n_approximators = get_class(args.agent_class)
+    
         
     params = {
         "eps": args.eps,
