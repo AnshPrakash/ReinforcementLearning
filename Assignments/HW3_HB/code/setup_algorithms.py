@@ -29,7 +29,7 @@ def setup_ppo_agent(mdp, n_features, lr, eps, batch_size, n_epochs_policy, lam, 
     # Critic
     # TODO: define the critic's input shape
     # [START YOUR CODE HERE
-
+    critic_input_shape = mdp.info.observation_space.shape
     # [END YOUR CODE HERE]
     critic_params = dict(
         network=ActorNetwork,
@@ -79,6 +79,9 @@ def setup_td3_agent(
     # TODO: define the actor's input and output shape
     # [START YOUR CODE HERE
 
+    actor_input_shape = mdp.info.observation_space.shape
+    actor_output_shape = mdp.info.action_space.shape
+
     # [END YOUR CODE HERE]
     actor_params = dict(
         network=BoundedActorNetwork,
@@ -92,7 +95,7 @@ def setup_td3_agent(
     # Critic
     # TODO: define the critic's input shape
     # [START YOUR CODE HERE
-
+    critic_input_shape = (actor_input_shape[0] + mdp.info.action_space.shape[0],)
     # [END YOUR CODE HERE]
     critic_params = dict(
         network=ActionValueCriticNetwork,
