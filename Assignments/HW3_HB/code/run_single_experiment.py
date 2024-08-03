@@ -55,7 +55,7 @@ def run_single_off_policy_experiment(
     for n in trange(n_epochs, leave=False):
         # TODO: use the learn function in the MushroomRL core object to train the agent
         # [START YOUR CODE HERE]
-
+        core.learn(n_steps=n_steps_training_per_epoch, n_steps_per_fit=n_steps_per_fit, quiet=True)
         # [END YOUR CODE HERE]
 
         dataset = core.evaluate(n_episodes=n_episodes_test_per_epoch, quiet=True, render=False)
