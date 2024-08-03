@@ -147,6 +147,10 @@ class HopperHurdles(Locomoter):
         # Hint: the healthy reward is a function of next_obs
         # [START YOUR CODE HERE]
 
+        healthy_reward = self._get_healthy_reward(next_obs)
+        forward_reward = self._get_forward_reward(self._forward_reward_weight)
+        ctrl_cost = self._get_ctrl_cost(action, self._ctrl_cost_weight)
+
         # [END YOUR CODE HERE]
         reward = (
             healthy_reward + forward_reward + ctrl_cost + 500 * float(self._x_pos > 4.5)
