@@ -22,6 +22,9 @@ class ActionValueCriticNetwork(nn.Module):
 
         # TODO:complete the following code by defining three fully connected layers
         # [START YOUR CODE HERE]
+        self._h1 = nn.Linear(n_input, n_features)
+        self._h2 = nn.Linear(n_features, n_features)
+        self._h3 = nn.Linear(n_features, n_output)
 
         # [END YOUR CODE HERE]
 
@@ -29,7 +32,12 @@ class ActionValueCriticNetwork(nn.Module):
         # For RELU layers, weights should be initialized using nn.init.calculate_gain('relu')
         # For Linear layers, weights should be initialized using nn.init.calculate_gain('linear')
         # [START YOUR CODE HERE]
-
+        nn.init.xavier_uniform_(self._h1.weight,
+                                gain=nn.init.calculate_gain('relu'))
+        nn.init.xavier_uniform_(self._h2.weight,
+                                gain=nn.init.calculate_gain('relu'))
+        nn.init.xavier_uniform_(self._h3.weight,
+                                gain=nn.init.calculate_gain('linear'))
         # [END YOUR CODE HERE]
 
     def forward(self, state, action):
@@ -69,7 +77,7 @@ class ValueCriticNetwork(nn.Module):
         # TODO: implement the forward pass of the first layer
         # use F.relu for activation functions, take care of the input shape
         # [START YOUR CODE HERE]
-
+        features1 = F.relu(self._h1(torch.squeeze(state, 1).float()))
         # [END YOUR CODE HERE]
         features2 = F.relu(self._h2(features1))
         a = self._h3(features2)
