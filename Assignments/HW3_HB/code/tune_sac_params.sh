@@ -18,7 +18,7 @@
 
 ## Here you can control the amount of memory that will be allocated for you job. To set this,
 ## you should run the programm on your local computer first and observe the memory it consumes.
-#SBATCH --mem-per-cpu 2000M
+#SBATCH --mem-per-cpu 3000M
 
 ## Duration of the job
 ## Do not allocate more time than you REALLY need. Maximum is 6 hours.
@@ -29,10 +29,10 @@
 #SBATCH --reservation=kurs00077
 
 ## Make sure to create the logs directory, BEFORE launching the jobs !!!
-#SBATCH -o /home/tv47cogo/100MHurdles/log_sbatch/SAC_%A_%a.out
+#SBATCH -o /home/kurse/kurs00077/ap74teje/ReinforcementLearning/Assignments/HW3_HB/log_sbatch/SAC_%A_%a.out
 
 # Make sure to activate the conda environment before requesting the job
-# conda activate /work/home/kurse/kurs00077/rl_assign3
+conda activate /work/home/kurse/kurs00077/rl_assign3
 
 # You can launch the job using the following:
 # sbatch tune_algorithm_params.sh
