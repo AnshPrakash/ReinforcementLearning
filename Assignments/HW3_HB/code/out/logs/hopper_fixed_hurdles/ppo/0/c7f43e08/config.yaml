@@ -1,0 +1,18 @@
+results_dir: "out/logs"
+seed: 0 
+algorithm: "ppo" 
+env_str: "hopper_fixed_hurdles" 
+horizon: 1000
+gamma: 0.99
+n_features: 128 
+batch_size: 64
+learning_rate: 0.0008
+eps: 0.1 # TODO: tune this parameter range(0.1 ~ 0.3)         
+n_epochs_policy: 5  
+lam: 0.95
+ent_coef: 0.002 
+n_epochs: 400
+n_steps_training_per_epoch: 20000 
+n_steps_per_fit: 10000 
+n_episodes_test_per_epoch: 5
+
